@@ -29,7 +29,7 @@ main:
     // printf("Annee de naissance ? ");
     pushl $fmt_annee
     call printf
-    subl $4, %esp
+    addl $4, %esp
 
     // scanf("%u", &annee);
     movl %ebp, %eax
