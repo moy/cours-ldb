@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "table_hachage.h"
 
@@ -32,6 +33,7 @@ table_hachage_t *new_table_hachage(unsigned largeur,
 	t->afficher = afficher;
 	t->table = malloc(largeur * sizeof(cellule_t *));
 	assert(t->table != NULL);
+	memset(t->table, 0, largeur * sizeof(cellule_t *));
 	return t;
 }
 
@@ -81,7 +83,7 @@ void supprimer_table_hachage(table_hachage_t * t, void *val)
 	i = t->hashcode(val) % t->largeur;
 	sent.suiv = t->table[i];
 	for (prec = &sent;
-	     (prec != NULL) && !t->egal(prec->suiv->val, val);
+	     (prec != NULL) && (prec->suiv) && !t->egal(prec->suiv->val, val);
 	     prec = prec->suiv) {};
 	if (prec->suiv != NULL) {
 		t->nbr--;
@@ -104,5 +106,6 @@ void detruire_table_hachage(table_hachage_t * t)
 			t->table[i] = t->table[i]->suiv;
 			free(tmp);
 		}
+	free(t->table);
 	free(t);
 }

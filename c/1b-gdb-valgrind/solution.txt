@@ -1,0 +1,28 @@
+diff --git a/c/1b-gdb-valgrind/valgrind/table_hachage.c b/c/1b-gdb-valgrind/valgrind/table_hachage.c
+index 7b79186..6e06ccf 100644
+--- a/c/1b-gdb-valgrind/valgrind/table_hachage.c
++++ b/c/1b-gdb-valgrind/valgrind/table_hachage.c
+@@ -33,6 +33,7 @@ table_hachage_t *new_table_hachage(unsigned largeur,
+ 	t->afficher = afficher;
+ 	t->table = malloc(largeur * sizeof(cellule_t *));
+ 	assert(t->table != NULL);
++	memset(t->table, 0, largeur * sizeof(cellule_t *));
+ 	return t;
+ }
+ 
+@@ -82,7 +83,7 @@ void supprimer_table_hachage(table_hachage_t * t, void *val)
+ 	i = t->hashcode(val) % t->largeur;
+ 	sent.suiv = t->table[i];
+ 	for (prec = &sent;
+-	     (prec != NULL) && !t->egal(prec->suiv->val, val);
++	     (prec != NULL) && (prec->suiv) && !t->egal(prec->suiv->val, val);
+ 	     prec = prec->suiv) {};
+ 	if (prec->suiv != NULL) {
+ 		t->nbr--;
+@@ -105,5 +106,6 @@ void detruire_table_hachage(table_hachage_t * t)
+ 			t->table[i] = t->table[i]->suiv;
+ 			free(tmp);
+ 		}
++	free(t->table);
+ 	free(t);
+ }

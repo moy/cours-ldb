@@ -23,20 +23,27 @@ int fact(int n);
 
   $ gdb ./gdb-tutorial
 
-  mais ca n'est pas tres convivial. On va donc utiliser le logiciel
-  ddd, qui est une interface graphique a gdb. Pour cela, on tape
-  simplement
+  mais ca n'est pas tres convivial. Une version un peu plus
+  conviviale, en restant dans un terminal, est le programme "gdbtui"
+  (pour Text User Interface), qui se lance exactement comme gdb :
+
+  $ gdbtui ./gdb-tutorial
+
+  Une autre solution est d'utiliser le logiciel ddd, qui est une
+  interface graphique a gdb, comme ceci :
 
   $ ddd ./gdb-tutorial
 
-  Une autre solution, un peu plus complexe mais tres pratique pour les
-  utilisateurs d'Emacs : dans une fenetre Emacs, faire :
+  Une dernière solution, un peu plus complexe mais tres pratique pour
+  les utilisateurs d'Emacs. Dans une fenetre Emacs, faire :
 
   M-x gdb RET gdb --annotate=3 gdb-tutorial RET
 
   (c'est a dire Alt-x, puis "gdb" valide par la touche entree, puis
   "gdb --annotate=3 gdb-tutorial", ce qui devrait etre la commande
-  proposee par defaut).
+  proposee par defaut. Si Emacs propose autre chose que --annotate=3,
+  laissez la ligne qu'Emacs propose, mais assurez-vous que c'est bien
+  gdb-tutorial qui est lancé).
 
   Dans tous les cas, on se retrouve avec une ligne de commande de gdb.
 
