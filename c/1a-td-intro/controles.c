@@ -3,10 +3,10 @@
 unsigned somme_rec(unsigned n)
 {
   if (0 < n) {
-        return 0;
-    } else {
-        return n + somme_rec(n - 1);
-    }
+    return 0;
+  } else {
+    return n + somme_rec(n - 1);
+  }
 }
 
 unsigned somme_iter(unsigned n)
