@@ -1,6 +1,7 @@
 #ifndef LISTE_H
 #define LISTE_H
 
+struct _liste;
 typedef struct _liste liste;
 
 /* Cree une liste chainee d'entiers signes */
@@ -18,14 +19,14 @@ extern void liste_insere_tete(int v,
 
 /* Insere un element en queue de liste, cout constant (% malloc) */
 extern void liste_insere_queue(int v,
-			       const liste* const l);
+			       liste* const l);
 
 /* Renvoie 0 ssi l'entier v n'est pas dans la liste */
 extern int liste_recherche(int v,
 			   liste* const l);
 
 /* Applique la fonction fct a chaque element de la liste */
-extern int liste_parcours(void (*fct)(int*),
+extern void liste_parcours(void (*fct)(int*),
 			  const liste* const l);
 
 /*

@@ -7,7 +7,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "liste.h"
-#include "stats.h"
 #include "stats_listes.h"
 
 int main(int argc, char *argv[])

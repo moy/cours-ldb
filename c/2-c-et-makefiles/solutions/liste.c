@@ -1,3 +1,4 @@
+#include "liste.h"
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
@@ -7,10 +8,10 @@ typedef struct _cellule {
 	struct _cellule* suiv;
 } cellule;
 
-typedef struct {
+struct _liste {
 	cellule* tete;
 	cellule* queue;
-} liste;
+};
 
 /* #x, pour le préprocesseur = x avec des guillemets autour. */
 #define STRINGIFY(x) #x
@@ -84,7 +85,7 @@ int liste_recherche(int v, liste* const l) {
 	cellule* cour;
 	VERIF_NULL(l);
 	for (cour = l->tete; cour && (cour->val != v); cour = cour->suiv);
-	return (int) cour;
+	return !!cour;
 }
 
 void liste_parcours(void (*fct)(int*),

@@ -43,7 +43,7 @@ int stat_listes_max(const liste* const l)
 float stat_listes_moyenne(const liste* const l)
 {
 	/* START CUT */
-	int resultat;
+	float resultat;
 	stat_init();
 	liste_parcours(entrer_valeur_ptr, l);
 	resultat = stat_moyenne();
