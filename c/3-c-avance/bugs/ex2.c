@@ -3,7 +3,7 @@
 #define MULTIPLY(a, b) a*b
 #define DEUX 1+1
 
-inline int multiply(int a, int b) {
+static inline int multiply(int a, int b) {
   return a * b;
 }
 
