@@ -5,7 +5,7 @@ size = 4
 create_string_asm:
 	pushl %ebp
 	movl %esp, %ebp
-	subl $(4+12), %esp
+	subl $4, %esp
 
 size_loc=-4
 str_param=8
@@ -29,9 +29,9 @@ val_param=12
 	movl %eax, chars(%ecx)
 
 	## memcpy(str->chars, val, size);
-	movl str_param(%ebp), %eax
 	pushl size_loc(%ebp)
 	pushl val_param(%ebp)
+	movl str_param(%ebp), %eax
 	pushl chars(%eax)
 	call memcpy
 	addl $12, %esp
