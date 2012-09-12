@@ -26,9 +26,8 @@ struct unrolled_list *unrolled_list_wrap(struct unrolled_list_elem *e) {
 }
 
 void unrolled_list_append(struct unrolled_list *dest, char *to_append) {
-	struct unrolled_list_elem *last = dest->last;
-	last->next = unrolled_list_elem(to_append);
-	dest->last = last->next;
+	dest->last->next = unrolled_list_elem(to_append);
+	dest->last = dest->last->next;
 }
 
 void unrolled_list_free(struct unrolled_list *r) {
