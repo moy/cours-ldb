@@ -24,10 +24,13 @@ int fact(int n);
   $ gdb ./gdb-tutorial
 
   mais ca n'est pas tres convivial. Une version un peu plus
-  conviviale, en restant dans un terminal, est le programme "gdbtui"
-  (pour Text User Interface), qui se lance exactement comme gdb :
+  conviviale, en restant dans un terminal, est de lancer gdb avec
+  l'option --tui (pour Text User Interface) :
 
-  $ gdbtui ./gdb-tutorial
+  $ gdb --tui ./gdb-tutorial
+
+  (on peut aussi lancer gdb normalement puis faire C-x o, i.e.
+  Control-x, puis o)
 
   Une autre solution est d'utiliser le logiciel ddd, qui est une
   interface graphique a gdb, comme ceci :
@@ -64,12 +67,12 @@ int main (void)
 
 	printf ("Bonjour\n");
 	printf ("Je vais faire un acces memoire interdit\n");
-	/* 
-	   La ligne suivante va faire un "Segmentation fault".
-     
-	   Le deboggeur va s'arreter sur cette ligne, et si on est dans 
-	   Emacs ou ddd, le logiciel ouvre le fichier et nous montre
-	   la ligne du code sur laquelle notre programme a plante.
+	/*
+	  La ligne suivante va faire un "Segmentation fault".
+	  
+	  Le deboggeur va s'arreter sur cette ligne, et si on est dans 
+	  Emacs ou ddd, le logiciel ouvre le fichier et nous montre
+	  la ligne du code sur laquelle notre programme a plante.
 	*/
 	*ptr = 0;
 	/*
