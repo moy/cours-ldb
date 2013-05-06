@@ -1,0 +1,279 @@
+\documentclass[11pt]{article}
+\usepackage[french]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{times}
+\usepackage{fullpage}
+\usepackage{listings}
+\usepackage{url}
+
+\lstset{language=C}
+\lstset{basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\bfseries,
+  keywordstyle=[2]\it}
+\lstset{showstringspaces=false}
+
+
+\title{Première séance machine\\Notions de C, compilation, débuggage}
+\author{Ensimag 1A Apprentissage, Logiciel de Base}
+\date{mai 2013}
+
+\begin{document}
+\maketitle
+
+Tous les programmes et morceaux de code sont disponibles dans le
+répertoire \texttt{c/1b-gdb-valgrind/} de l'archive Git.
+
+\section{Premiers pas en C}
+
+On commence avec un programme simple, \texttt{hello.c} :
+
+\lstinputlisting{hello.c}
+
+(la fonction \texttt{puts} affiche une chaîne à l'écran, puis passe à
+la ligne. La fonction \texttt{printf} affiche la chaîne donnée en
+argument, dans laquelle on remplace les \texttt{"\%d"} par les
+arguments suivant la chaîne)
+
+% Remarque : on utilise puts, parce que gcc fait une optimisation
+% lorsqu'il voit un printf avec une chaine de formatage sans % et
+% finissant par \n, il le remplace par le puts équivalent. Du coup,
+% les étudiants ne vont plus rien comprendre ...
+
+Compilez-le, puis exécutez-le :
+
+\begin{verbatim}
+telesun> gcc hello.c -o hello
+telesun> ./hello
+[...]
+\end{verbatim}
+
+\section{Exploration de la chaîne de compilation}
+
+\subsection{Compilation}
+
+Il s'est en fait passé beaucoup de choses dans les deux commandes
+précédentes. La première étape est la compilation proprement dite, on
+peut arrêter \texttt{gcc} après cette étape avec l'option
+\texttt{-S} :
+
+\begin{verbatim}
+telesun> gcc -S hello.c
+\end{verbatim}
+
+Ceci va générer un fichier \texttt{hello.s}. Ouvrez-le dans un éditeur
+de texte. Vous avez devant vous un programme en langage d'assemblage.
+On trouve dedans :
+
+\begin{itemize}
+\item Des définitions de données (les chaînes qui apparaissent dans le
+  programme)
+\item Des instructions. En particulier, on reconnait les appels à la
+  fonction \texttt{puts}, qui sont sous la forme \texttt{call puts},
+  entourées d'incantations magiques.
+\item Des étiquettes, par exemple, \verb|main:|.
+\end{itemize}
+
+A ce stade, le programme ne dit rien sur l'implémentation des
+fonctions \texttt{puts}, \texttt{printf} et \texttt{scanf}. On se
+contente de supposer qu'elles existent (on cherchera leur
+implémentation plus tard, c'est l'édition de liens).
+
+\subsection{Assemblage}
+
+Le langage d'assemblage décrit précisément chaque instruction à
+exécuter, mais elles ne sont pas dans un format directement exécutable
+par le processeur. L'étape suivante est d'assembler les instructions,
+on peut le faire avec la commande :
+
+\begin{verbatim}
+telesun> gcc -c hello.s
+\end{verbatim}
+
+Ce qui va créer un fichier \texttt{hello.o}. Essayez de l'ouvrir dans
+un éditeur de texte pour vous convaincre que c'est du binaire
+illisible. On reconnaît quand même quelques chaînes de caractères. On
+peut afficher le fichier de manière un peu raisonnable avec des
+commandes comme :
+
+\begin{verbatim}
+telesun> hexdump hello.o
+[...]
+telesun> hexdump -c hello.o
+[...]
+\end{verbatim}
+
+Mais des outils spécialisés peuvent aussi extraire quelques données
+intéressantes du fichier. Par exemple, la commande \texttt{nm} liste
+les symboles définis ou utilisés dans le fichier (l'équivalent des
+étiquettes, mais après assemblage) :
+
+\begin{verbatim}
+$ nm hello.o
+00000000 T main
+         U printf
+         U puts
+         U scanf
+\end{verbatim}
+%$
+
+On voit que le symbole \texttt{main} est défini (<<~T~>> veut dire
+<<~Text~>>, on verra plus tard pourquoi). En revanche, les symboles
+\texttt{printf}, \texttt{puts} et \texttt{scanf} sont toujours
+indéfinis (<<~U~>> pour <<~Undefined~>>).
+
+La traduction du langage d'assemblage vers le binaire garde la
+quasi-totalité des informations du fichiers assembleur, mais change de
+représentation. On peut retrouver le texte assembleur avec un
+désassembleur, par exemple :
+
+\begin{verbatim}
+$ objdump -d hello.o
+\end{verbatim}
+%$
+
+(objdump n'est pas installé par défaut sous Mac OS X. Si vous ne
+pouvez pas faire cette manipulation, ce n'est pas très grave ...)
+
+\subsection{Édition de lien}
+
+L'étape suivante est surtout intéressante lorsqu'on fait de la
+compilation séparée, mais il se passe aussi des choses avec un seul
+fichier : on <<~prépare~>> le fichier, pour qu'il soit prêt à être
+exécuté :
+
+\begin{verbatim}
+telesun> gcc hello.o -o hello
+\end{verbatim}
+
+Le fichier généré est un peu plus gros. La commande \texttt{nm} donne
+beaucoup plus de symboles. Par exemple, il y a maintenant un symbole
+\texttt{\_start}, qui correspond au point d'entrée de l'exécution
+(c'est lui qui appellera la fonction \texttt{main}, au tout début de
+l'exécution). L'éditeur de lien a également repéré où se trouveront
+les fonctions \texttt{printf}, \texttt{puts}, \texttt{scanf} (et il
+aurait donné une erreur si il ne les avait pas trouvés). On peut voir
+ça avec la commande \texttt{ldd} (ou \texttt{otool -L} sous Mac) :
+
+\begin{verbatim}
+telesun> ldd hello
+        libc.so.6 => /lib/tls/libc.so.6 (0x40018000)
+        /lib/ld-linux.so.2 (0x40000000)
+\end{verbatim}
+
+On n'utilise que des fonctions de la bibliothèque C standard, donc il
+y a une référence à \texttt{libc.so} (ne vous occupez pas du
+\texttt{ld-linux.so}). Mais sur un exécutable de la vraie vie, c'est un
+peu plus long. Par exemple, pour Emacs :
+
+\begin{verbatim}
+telesun> ldd /usr/bin/emacs
+[...]
+\end{verbatim}
+
+Il y a plus de monde !
+
+\section{Makefile}
+
+Lorsqu'il n'y a qu'un seul fichier à compiler, on a vu plus haut
+qu'une commande suffisait à tout faire (\texttt{gcc fichier.c -o
+  executable}), mais les choses se compliquent sur des gros projets :
+si le projet met 1 heure à compiler, on ne veut pas {\em tout}
+recompiler à chaque fois, on veut un outil qui recompile seulement ce
+qui est nécessaire.
+
+L'archive disponible sur le site du cours contient un répertoire {\tt
+  compilation/}.
+
+Le répertoire contient 3 fichiers sources \texttt{.c}, et deux fichiers
+d'en-têtes \texttt{.h}. Un Makefile très simple est fourni, pour
+l'utiliser, il suffit de taper \texttt{make} dans le répertoire du
+projet. \texttt{make} va lire le fichier \texttt{Makefile}, regarder
+les dates de dernière modifications des fichiers sur le disque, et en
+déduire ce qu'il doit faire. Tapez \texttt{make} deux fois. La
+première fois recompile tout, la seconde est presque instantance.
+
+Maintenant, modifiez, par exemple, le fichier \texttt{bonjour.c} pour
+changer le message affiché à l'utilisateur. Sauvez ce fichier, puis
+recompilez avec \texttt{make} : le fichier est recompilé, et l'édition
+de lien est refaite. Essayez la même chose en modifiant
+\texttt{bonjour.h} : tous les fichiers qui en dépendent sont
+recompilés.
+
+\section{Utilisation de GDB pour déboguer des programmes}
+
+Déboguer des programmes en C est bien plus difficile qu'en Ada ou en
+Java (en langage d'assemblage, ça sera encore pire ...). D'une part
+parce qu'il y a plus d'occasion de faire des erreurs,
+mais aussi parce qu'un programme écrit en C qui plante ne donne pas le
+numéro de ligne ou le nom de la fonction dans lequel s'est produit le
+problème (typiquement, le programme dit juste <<~Segmentation Fault~>>).
+
+Un mauvais programmeur ajouterait des \lstinline{printf} un peu
+partout dans son code pour essayer de comprendre son exécution, mais
+cette technique est très inefficace. Heureusement, il existe des
+outils pour éviter ce calvaire : les débogueurs. Nous allons apprendre
+à nous servir de {\tt gdb} : <<~GNU DeBugger~>>.
+
+Ouvrez le fichier {\tt gdb/gdb-tutorial.c} dans votre éditeur de texte
+favori, et suivez les instructions pas à pas.
+
+\section{Valgrind: Un autre outil bien pratique pour l'aide au débogage}
+
+Valgrind est un debogueur mémoire. Il permet d'exécuter un programme
+en vérifiant les accès mémoires, et permet donc d'identifier des
+erreurs de programmations qui seraient passées inaperçues « par
+chance », ou d'expliquer certains comportements étranges d'un
+programme. Une introduction courte est disponible sur EnsiWiki :
+\url{https://ensiwiki.ensimag.fr/index.php/Valgrind}
+
+On vous fournit aussi un module implantant une table de hachage et un
+programme de test (très incomplet !). Compilez ce programme et
+exécutez le : il plante avec une segmentation fault.
+
+Vous allez devoir étudier le code du module table de hachage pour
+comprendre comment il fonctionne et localiser les erreurs. Il s'agit
+d'erreurs en liaison avec la gestion mémoire : vous avez donc tout
+intérêt à utiliser le logiciel valgrind pour vous aider !
+
+Indication : il y a 3 erreurs volontaires (et un nombre indéfini de
+bugs non voulus ;) ) dans le module table de hachage.
+
+\section{Compilation et exécution des exemples vus en TD}
+
+Si vous ne l'avez pas déjà fait, téléchargez les exemples vus en TD
+puis compilez et exécutez les programmes.
+
+Si le temps le permet, essayez d'exécuter pas-à-pas les programmes
+dans Gdb. Vous pouvez aussi jouer avec le fichier {\tt gdb/bug.c} dans
+l'archive, et chercher à corriger le (ou plutôt les) bugs qu'il
+contient.
+
+
+% \section{Programmes plus évolués en C}
+
+% \subsection{Entrées-sorties}
+
+% En utilisant les fonctions {\tt printf} et {\tt scanf} (faire par
+% exemple {\tt man 3 printf} pour une documentation), faites un
+% programme qui dit bonjour à l'utilisateur, lui demande son âge et son
+% prénom, et affiche <<Bonjour, XXX, vous avez YYY ans>>.
+
+% Note: dans la vraie vie, l'utilisation de {\tt scanf} est en fait
+% déconseillée. Pensez à ce qui se passe si l'utilisateur entre un
+% prénom de 10000 caractères dans le programme que vous venez d'écrire.
+
+% \subsection{Solutions du TD}
+
+% Reprenez la feuille de TD de langage C, et implémentez sur machine les
+% solutions des exercices. Autant que possible, faites vraiment
+% l'exercice sur machine, sans regarder le corrigé.
+
+\end{document}
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% ispell-local-dictionary: "francais"
+%%% End: 
