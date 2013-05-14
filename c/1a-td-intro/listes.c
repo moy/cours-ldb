@@ -50,19 +50,19 @@ void supprimer_premier(struct cellule_t **liste, int v)
 
 int main(void)
 {
-    struct cellule_t *liste = NULL;
+    struct cellule_t *liste_main = NULL;
     for (int i = 6; i < 10; i++) {
-        inserer_queue(&liste, i);
-        afficher(liste);
+        inserer_queue(&liste_main, i);
+        afficher(liste_main);
     }
     for (int i = 5; i > 0; i--) {
-        inserer_tete(&liste, i);
-        afficher(liste);
+        inserer_tete(&liste_main, i);
+        afficher(liste_main);
     }
     srand(time(NULL));
-    while (liste != NULL) {
-        supprimer_premier(&liste, rand() % 10);
-        afficher(liste);
+    while (liste_main != NULL) {
+        supprimer_premier(&liste_main, rand() % 10);
+        afficher(liste_main);
     }
     return 0;
 }
