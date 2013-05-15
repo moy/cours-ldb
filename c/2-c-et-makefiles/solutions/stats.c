@@ -7,8 +7,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-/* Pour INT_MAX et INT_MIN */
-#include <limits.h>
+#include <limits.h> /* Pour pouvoir utiliser INT_MAX et INT_MIN */
+#include <assert.h>
 #include "stats.h"
 
 /* START CUT */
@@ -26,9 +26,9 @@ static float  total;      /*le total de l'ensemble*/
 void stat_init()
 {
 	/* START CUT */
-	min      = INT_MAX;
-	max      = INT_MIN;
-	total     = 0;
+	min = INT_MAX;
+	max = INT_MIN;
+	total = 0;
         nb_valeurs = 0;
 	/* END CUT */
 	/* ... */
@@ -62,9 +62,9 @@ void stat_end()
 void stat_entrer_valeur(int value)
 {
 	/* START CUT */
-	if(value < min) min = value;
-	if(value > max) max = value;
-	total              += value;
+	if (value < min) min = value;
+	if (value > max) max = value;
+	total               += value;
 	nb_valeurs++;
 	/* END CUT */
 }
@@ -73,12 +73,12 @@ void stat_entrer_valeur(int value)
 /* START CUT */
 /*
  * Accès au minimum de l'ensemble
- * Renvoie le minimum
  */
 /* END CUT */
 int stat_min()
 {
 	/* START CUT */
+	assert(nb_valeurs > 0);
 	return min;
 	/* END CUT */
 }
@@ -86,12 +86,12 @@ int stat_min()
 /* START CUT */
 /*
  * Accès au maximum de l'ensemble
- * Renvoie le maximum
  */
 /* END CUT */
 int stat_max()
 {
 	/* START CUT */
+	assert(nb_valeurs > 0);
 	return max;
 	/* END CUT */
 }
@@ -99,12 +99,12 @@ int stat_max()
 /* START CUT */
 /* 
  * Accès à la moyenne de l'ensemble
- * Renvoie la moyenne
  */
 /* END CUT */
 float stat_moyenne()
 {
 	/* START CUT */
+	assert(nb_valeurs > 0);
 	return total/nb_valeurs;
 	/* END CUT */
 }

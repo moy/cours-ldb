@@ -7,8 +7,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-/* Pour INT_MAX et INT_MIN */
-#include <limits.h>
+#include <limits.h> /* Pour pouvoir utiliser INT_MAX et INT_MIN */
+#include <assert.h>
 #include "stats.h"
 
 

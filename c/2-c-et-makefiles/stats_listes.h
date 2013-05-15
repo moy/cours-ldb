@@ -15,20 +15,20 @@
  * Renvoie le minimum
  * Précondition : la liste est non-vide
  */
-int stat_listes_min(const liste* const l);
+extern int stat_listes_min(const liste* const l);
 
 /*
  * Accès au maximum de la liste
  * Renvoie le maximum
  * Précondition : la liste est non-vide
  */
-int stat_listes_max(const liste* const l);
+extern int stat_listes_max(const liste* const l);
 
 /*
  * Accès à la moyenne de la liste
  * Renvoie la moyenne
  * Précondition : la liste est non-vide
  */
-float stat_listes_moyenne(const liste* const l);
+extern float stat_listes_moyenne(const liste* const l);
 
 #endif /* STATS_LISTES_H */

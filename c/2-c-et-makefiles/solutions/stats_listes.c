@@ -10,11 +10,11 @@
 #include "stats_listes.h"
 #include "stats.h"
 
+/* START CUT */
 static void entrer_valeur_ptr(int * v) {
-	/* START CUT */
 	stat_entrer_valeur(*v);
-	/* END CUT */
 }
+/* END CUT */
 
 int stat_listes_min(const liste* const l)
 {
@@ -26,6 +26,7 @@ int stat_listes_min(const liste* const l)
 	stat_end();
 	return resultat;
 	/* END CUT */
+	/* UNCOMMENT abort(); // TODO */
 }
 
 int stat_listes_max(const liste* const l)
@@ -38,6 +39,7 @@ int stat_listes_max(const liste* const l)
 	stat_end();
 	return resultat;
 	/* END CUT */
+	/* UNCOMMENT abort(); // TODO */
 }
 
 float stat_listes_moyenne(const liste* const l)
@@ -50,4 +52,5 @@ float stat_listes_moyenne(const liste* const l)
 	stat_end();
 	return resultat;
 	/* END CUT */
+	/* UNCOMMENT abort(); // TODO */
 }

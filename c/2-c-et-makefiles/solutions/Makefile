@@ -23,7 +23,7 @@ $(BIN): $(OBJS)
 	$(LD) $(LDFLAGS) -o $@ $^
 
 # la dependance %.o: %.c est dans la regle generique d'en dessous.
-stats_listes.o: stats.h liste.h
+stats_listes.o: stats.h liste.h stats_listes.h
 moyenne_liste.o: stats.h liste.h stats_listes.h
 stats.o: stats.h
 
