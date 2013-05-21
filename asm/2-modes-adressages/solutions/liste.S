@@ -21,8 +21,6 @@ debut_while:
 	// END CUT
 	jmp debut_while
 fin_while:
-	
-fin_main:
 	xorl %eax, %eax  // Équivalent du "return 0;" en C
 	leave            // Sortie de la fonction main.
 	ret
