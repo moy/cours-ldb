@@ -52,7 +52,7 @@ void echange(int src[]) {
 void affiche(int tab[]) {
 	int i;
 	for (i = 0; tab[i]; i ++) {
-		printf("0x%X ", tab[i]);
+		printf("0x%08X ", tab[i]);
 	}
 	printf("\n");
 }
